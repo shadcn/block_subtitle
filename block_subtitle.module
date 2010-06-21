@@ -1,0 +1,118 @@
+<?php // $Id$
+
+/**
+ * @file
+ * TThis module allows subtitles to be added to blocks
+**/
+
+/**
+ * Implementation of hook_form_alter 
+**/
+function block_subtitle_form_alter(&$form, &$form_state, $form_id) {
+  
+  if($form_id == 'block_admin_configure') {
+    
+    $block->module = $form['module']['#value'];
+    $block->delta = $form['delta']['#value'];
+    
+    $subtitle = _block_subtitle_get_subtitle($block);
+    
+    //Assign weight to block title so it appears above link
+    if (!isset($form['block_settings']['#weight'])) {
+      $form['block_settings']['#weight'] = -1;
+    }
+    
+    $form['block_settings']['block_subtitle'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Subtitle'),
+      '#default_value' => $subtitle,
+      '#description' => t('Subtitle for the block. Leave blank if you do not need a subtitle.'),
+    );
+        
+   $form['#validate'][] = 'block_subtitle_validate';
+   
+  }
+  
+}
+
+/**
+ * Implementation of hook_validation()
+**/
+function block_subtitle_validate($form, &$form_state) {
+  if ($form_state['values']['form_id'] == 'block_admin_configure') {
+    if (isset($form_state['values']['block_subtitle']) && user_access('administer blocks')) {
+      
+      $module = arg(4);
+      $delta = arg(5);
+      
+      $subtitle = $form_state['values']['block_subtitle'];
+      
+      //Save Subtitle
+      if ($module && ($delta || $delta === 0)) {
+        $block_name = $module .'_'. $delta;
+        //Delete subtitle if blank
+        if (strlen($subtitle) == 0 || $subtitle == '') {
+          _block_subtitle_delete($block_name);
+        }
+        else {
+          _block_subtitle_save($block_name, $subtitle);
+        }
+      }
+    }
+  }
+  block_admin_configure_validate($form, $form_state);
+}
+
+
+/**
+ * Function to get the subtitle of a block
+ * @param array $block - Block name
+ * @return string - the block subtitle
+**/
+function _block_subtitle_get_subtitle($block) {
+  
+  if (!isset($block->module) && !isset($block->delta)) {
+    return FALSE;
+  }
+  
+  $varname = 'block_subtitle_' . $block->module .'_'. $block->delta;
+  
+  return variable_get($varname, NULL);
+}
+
+/**
+ * Function to save a subtitle
+ * @param string $blockname
+ * @param string $value - The subtitle for the block
+ * @return void
+**/
+function _block_subtitle_save($block_name, $value) {
+  
+  variable_set('block_subtitle_'. $block_name, $value);
+  
+}
+
+/** 
+ * Function to delete a subtitle
+ * @param string $blockname
+ * @return void
+**/
+function _block_subtitle_delete($block_name){
+  
+  variable_set('block_subtitle_'. $block_name, $value);
+  
+}
+
+
+/**
+ * Implementation of hook_preprocess_block
+**/
+function block_subtitle_preprocess_block(&$vars, $hook) {  
+  if ($hook == 'block') {
+    $vars['block']->subtitle = _block_subtitle_get_subtitle($vars['block']);
+    $subtitle = $vars['block']->subtitle;
+    if ($subtitle != '') {
+      $vars['block']->subtitle = $subtitle;
+    }
+  }
+}
