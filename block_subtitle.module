@@ -15,12 +15,7 @@ function block_subtitle_form_alter(&$form, &$form_state, $form_id) {
     
     $subtitle = _block_subtitle_get_subtitle($block);
     
-    //Assign weight to block title so it appears above link
-    if (!isset($form['block_settings']['#weight'])) {
-      $form['block_settings']['#weight'] = -1;
-    }
-    
-    $form['block_settings']['block_subtitle'] = array(
+    $form['settings']['block_subtitle'] = array(
       '#type' => 'textfield',
       '#title' => t('Subtitle'),
       '#default_value' => $subtitle,
