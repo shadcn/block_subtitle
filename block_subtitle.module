@@ -86,11 +86,7 @@ function _block_subtitle_delete($block_name){
 **/
 function block_subtitle_preprocess_block(&$vars, $hook) {  
   if ($hook == 'block') {
-    $vars['block']->subtitle = _block_subtitle_get_subtitle($vars['block']);
-    $subtitle = $vars['block']->subtitle;
-    if ($subtitle != '') {
-      $vars['block']->subtitle = $subtitle;
-    }
+    $vars['subtitle'] = _block_subtitle_get_subtitle($vars['block']);
   }
 }
 
@@ -99,7 +95,9 @@ function block_subtitle_preprocess_block(&$vars, $hook) {
  */
 function block_subtitle_get_delta($module) {
   //get last delta
-  $result = db_query('SELECT delta FROM {blocks} WHERE module = "%s" ORDER BY bid DESC LIMIT 1', $module);
+  $result = db_query('SELECT delta FROM {blocks} WHERE module = ":module" ORDER BY bid DESC LIMIT 1', array(
+    ':module' => $module)
+  );
   $data = db_fetch_object($result);
   
   return $data->delta;
