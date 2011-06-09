@@ -86,7 +86,7 @@ function _block_subtitle_delete($block_name){
 **/
 function block_subtitle_preprocess_block(&$vars, $hook) {  
   if ($hook == 'block') {
-    $vars['subtitle'] = _block_subtitle_get_subtitle($vars['block']);
+    $vars['block']->subtitle = _block_subtitle_get_subtitle($vars['block']);
   }
 }
 
