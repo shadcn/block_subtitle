@@ -78,7 +78,7 @@ function _block_subtitle_save($block_name, $value) {
  * @return void
 **/
 function _block_subtitle_delete($block_name){
-  variable_set('block_subtitle_'. $block_name, $value);
+  variable_set('block_subtitle_'. $block_name, '');
 }
 
 /**
