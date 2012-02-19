@@ -1,13 +1,13 @@
-<?php // $Id$
+<?php
 
 /**
  * @file
  * This module allows subtitles to be added to blocks
-**/
+ **/
 
 /**
- * Implementation of hook_form_alter 
-**/
+ * Implements hook_form_alter 
+ **/
 function block_subtitle_form_alter(&$form, &$form_state, $form_id) {
   if ($form_id == 'block_add_block_form' || $form_id == 'block_admin_configure') {
     $block->module = $form['module']['#value'];
@@ -50,9 +50,12 @@ function block_subtitle_submit($form, &$form_state) {
 
 /**
  * Function to get the subtitle of a block
- * @param array $block - Block name
- * @return string - the block subtitle
-**/
+ * 
+ * @param
+ *  $block - Block name
+ * @return
+ *  the block subtitle
+ **/
 function _block_subtitle_get_subtitle($block) {
   if (!isset($block->module) && !isset($block->delta)) {
     return FALSE;
@@ -64,10 +67,7 @@ function _block_subtitle_get_subtitle($block) {
 
 /**
  * Function to save a subtitle
- * @param string $blockname
- * @param string $value - The subtitle for the block
- * @return void
-**/
+ **/
 function _block_subtitle_save($block_name, $value) {
   variable_set('block_subtitle_'. $block_name, $value);
 }
@@ -76,7 +76,7 @@ function _block_subtitle_save($block_name, $value) {
  * Function to delete a subtitle
  * @param string $blockname
  * @return void
-**/
+ **/
 function _block_subtitle_delete($block_name){
   variable_set('block_subtitle_'. $block_name, '');
 }
