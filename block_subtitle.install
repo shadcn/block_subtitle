@@ -1,11 +1,12 @@
-<?php // $Id$
+<?php
 
 /**
- * @file Installation for block_subtitle module
-**/
+ * @file
+ * Installation for block_subtitle module.
+ */
 
 /**
- * Implementation of hook_uninstall()
+ * Implements hook_uninstall().
  */
 function block_subtitle_uninstall() {
   db_query("DELETE FROM {variable} WHERE name LIKE 'block_subtitle_%'");
