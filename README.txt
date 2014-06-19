@@ -18,3 +18,6 @@ None.
     <h3 class="subtitle"><?php print $block->subtitle; ?></h3>
 <?php endif; ?>
 
+* Create the block.tpl.php in your theme if it does not exist.
+
+
