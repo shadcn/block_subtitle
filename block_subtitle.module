@@ -6,13 +6,14 @@
  **/
 
 /**
- * Implements hook_form_alter 
+ * Implements hook_form_alter().
  **/
 function block_subtitle_form_alter(&$form, &$form_state, $form_id) {
   if ($form_id == 'block_add_block_form' || $form_id == 'block_admin_configure') {
     $block->module = $form['module']['#value'];
     $block->delta = $form['delta']['#value'];
-    
+
+    // Get the subtitle.
     $subtitle = _block_subtitle_get_subtitle($block);
     
     $form['settings']['block_subtitle'] = array(
@@ -28,17 +29,17 @@ function block_subtitle_form_alter(&$form, &$form_state, $form_id) {
 }
 
 /**
- * Custom submit handler for block_subtitle
+ * Custom submit handler for block_subtitle.
  */
 function block_subtitle_submit($form, &$form_state) {
   $module = $form_state['values']['module'];
   $delta = ($form_state['values']['delta']) ? $form_state['values']['delta'] : block_subtitle_get_delta($module);
   $subtitle = $form_state['values']['block_subtitle'];
   
-  //Save Subtitle
+  // Save the suubtitle.
   if ($module && ($delta || $delta == 0)) {
     $block_name = $module .'_'. $delta;
-    //Delete subtitle if blank
+    // Delete subtitle if blank.
     if (strlen($subtitle) == 0 || $subtitle == '') {
       _block_subtitle_delete($block_name);
     }
@@ -49,11 +50,12 @@ function block_subtitle_submit($form, &$form_state) {
 }
 
 /**
- * Function to get the subtitle of a block
+ * Function to get the subtitle of a block.
  * 
- * @param
- *  $block - Block name
- * @return
+ * @param object $block.
+ *  The block name.
+ *
+ * @return string
  *  the block subtitle
  **/
 function _block_subtitle_get_subtitle($block) {
@@ -66,35 +68,31 @@ function _block_subtitle_get_subtitle($block) {
 }
 
 /**
- * Function to save a subtitle
+ * Function to save a subtitle.
  **/
 function _block_subtitle_save($block_name, $value) {
   variable_set('block_subtitle_'. $block_name, $value);
 }
 
 /** 
- * Function to delete a subtitle
- * @param string $blockname
- * @return void
+ * Function to delete a subtitle.
  **/
 function _block_subtitle_delete($block_name){
   variable_set('block_subtitle_'. $block_name, '');
 }
 
 /**
- * Implementation of hook_preprocess_block
+ * Implements hook_preprocess_block().
 **/
-function block_subtitle_preprocess_block(&$vars, $hook) {  
-  if ($hook == 'block') {
-    $vars['block']->subtitle = _block_subtitle_get_subtitle($vars['block']);
-  }
+function block_subtitle_preprocess_block(&$vars) {
+  $vars['block']->subtitle = _block_subtitle_get_subtitle($vars['block']);
 }
 
 /**
- * Gets the delta for custom blocks
+ * Gets the delta for custom blocks.
  */
 function block_subtitle_get_delta($module) {
-  //get last delta
+  // Get last delta.
   $result = db_query('SELECT delta FROM {blocks} WHERE module = ":module" ORDER BY bid DESC LIMIT 1', array(
     ':module' => $module)
   );
