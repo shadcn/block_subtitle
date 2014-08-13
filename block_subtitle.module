@@ -92,11 +92,16 @@ function block_subtitle_preprocess_block(&$vars) {
  * Gets the delta for custom blocks.
  */
 function block_subtitle_get_delta($module) {
-  // Get last delta.
-  $result = db_query('SELECT delta FROM {blocks} WHERE module = ":module" ORDER BY bid DESC LIMIT 1', array(
-    ':module' => $module)
-  );
-  $data = db_fetch_object($result);
-  
-  return $data->delta;
+  // The blocks table changed to block in block_update_7002()
+  $table = db_table_exists('blocks') ? 'blocks' : 'block';
+
+  //get last delta
+  $delta = db_select($table, 'b')
+    ->fields('b', array('delta'))
+    ->condition('module', $module)
+    ->orderBy('bid', 'DESC')
+    ->range(0, 1)
+    ->execute()->fetchField();
+
+  return $delta;
 }
